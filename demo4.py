@@ -4,6 +4,8 @@
 Example to create a Mininet topology and connect it to the internet via NAT
 """
 
+from http import server
+from platform import node
 from mininet.net import Mininet, Containernet
 from mininet.cli import CLI
 from mininet.log import lg, info
@@ -41,14 +43,14 @@ class TreeTopo(Topo):
 class ContainerTreeTopo(Topo):
     "Topology for a container tree network with a given depth and fanout."
 
-    def build(self, depth=1, fanout=2, dimage="aesaganda:server"):
+    def build(self, depth=1, fanout=2):
         # Numbering:  h1..N, s1..M
         self.hostNum = 1
         self.switchNum = 1
         # Build topology
-        self.addTree(depth, fanout, dimage)
+        self.addTree(depth, fanout)
 
-    def addTree(self, depth, fanout, dimage):
+    def addTree(self, depth, fanout):
         """Add a subtree starting with node n.
            returns: last node added"""
         isSwitch = depth > 0
@@ -56,12 +58,18 @@ class ContainerTreeTopo(Topo):
             node = self.addSwitch('s%s' % self.switchNum)
             self.switchNum += 1
             for _ in range(fanout):
-                child = self.addTree(depth - 1, fanout, dimage)
+                child = self.addTree(depth - 1, fanout)
                 self.addLink(node, child)
         else:
-            node = self.addHost('h%s' % self.hostNum,
-                                cls=Docker, dimage=dimage)
-            self.hostNum += 1
+            if(self.hostNum % 2 == 0):
+                node = self.addHost('h%s' % self.hostNum,
+                                    cls=Docker, dimage="aesaganda:client")
+                self.hostNum += 1
+
+            else:
+                node = self.addHost('h%s' % self.hostNum,
+                                    cls=Docker, dimage="aesaganda:server")
+                self.hostNum += 1
         return node
 
 
@@ -94,11 +102,11 @@ if __name__ == '__main__':
     # info('Execute: client.cmd("time curl 10.0.0.251/hello/42")\n')
     # info(h2.cmd("time curl 10.0.0.251/hello/42") + "\n")
 
-    info('Execute: client.cmd("time curl server")\n')
-    info(h1.cmd("time curl server") + "\n")
+    # info('Execute: client.cmd("time curl server")\n')
+    # info(node.cmd("time curl server") + "\n")
 
-    info('Execute: client.cmd("time curl server/hello/42")\n')
-    info(h2.cmd("time curl server/hello/42") + "\n")
+    # info('Execute: client.cmd("time curl server/hello/42")\n')
+    # info(node.cmd("time curl server/hello/42") + "\n")
 
     CLI(net)
     # Shut down NAT
