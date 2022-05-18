@@ -58,12 +58,15 @@ class ContainerTreeTopo(Topo):
             for _ in range(fanout):
                 child = self.addTree(depth - 1, fanout)
                 self.addLink(node, child)
+
+        # Eklenme sırası çift sayı olan containerler client görevi üstlenir
         else:
             if(self.hostNum % 2 == 0):
                 node = self.addHost('client%s' % self.hostNum,
                                     cls=Docker, dimage="aesaganda:client")
                 self.hostNum += 1
 
+        # Eklenme sırası tek sayı olan containerler server görevi üstlenir
             else:
                 node = self.addHost('server%s' % self.hostNum,
                                     cls=Docker, dimage="aesaganda:server", dcmd="python app.py")
