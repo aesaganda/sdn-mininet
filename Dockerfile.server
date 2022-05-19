@@ -7,7 +7,8 @@ RUN apt-get update && apt-get install -y \
     iputils-ping \
     iproute2 \
     isc-dhcp-server \
-    curl
+    curl \
+    wget
 
 # pip install'ın root olarak çalıştırılmasını engellemek için virtual environment oluşturulur.
 ENV VIRTUAL_ENV=/opt/venv

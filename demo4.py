@@ -43,12 +43,13 @@ class ContainerTreeTopo(Topo):
     "Topology for a container tree network with a given depth and fanout."
 
     def build(self, depth=1, fanout=2):
-        # Numbering:  h1..N, s1..M
+        # Numaralandırma için sayaç değişkenleri
         self.hostNum = 1
         self.switchNum = 1
-        # Build topology
+        # Topolojinin kurulması
         self.addTree(depth, fanout)
 
+    # Binary tree mantığı ile switchlere node'lar eklenerek ağın oluşturulması
     def addTree(self, depth, fanout):
         """Add a subtree starting with node n.
            returns: last node added"""
@@ -62,15 +63,21 @@ class ContainerTreeTopo(Topo):
 
         # Eklenme sırası çift sayı olan containerler client görevi üstlenir
         else:
-            if(self.hostNum % 2 == 0):
+            if(self.hostNum % 3 == 0):
                 node = self.addHost('client%s' % self.hostNum,
-                                    cls=Docker, dimage="aesaganda:client")
+                                    cls=Docker, dimage="aesaganda:client", ip="10.0.0.30")
+                self.hostNum += 1
+
+            elif(self.hostNum % 3 == 1):
+                node = self.addHost('host%s' % self.hostNum, ip="10.0.0.40")
                 self.hostNum += 1
 
         # Eklenme sırası tek sayı olan containerler server görevi üstlenir
             else:
                 node = self.addHost('server%s' % self.hostNum,
-                                    cls=Docker, dimage="aesaganda:server", dcmd="python app.py")
+                                    cls=Docker, dimage="aesaganda:server", dcmd="python app.py", ip="10.0.0.20")
+                # node = self.addHost('server%s' % self.hostNum,
+                #                     cls=Docker, dimage="test_server:latest", dcmd="python app.py", ip="10.0.0.20")
                 self.hostNum += 1
         return node
 
@@ -89,8 +96,9 @@ def TreeContainerNet(depth=1, fanout=2, **kwargs):
 
 if __name__ == '__main__':
     lg.setLogLevel('info')
-    net = TreeContainerNet(depth=1, fanout=2, waitConnected=True)
-    # Add NAT connectivity
+    net = TreeContainerNet(depth=1, fanout=3, waitConnected=True)
+
+    # NAT kuralları ekleyen wrapper
     net.addNAT().configDefault()
     net.start()
     info("*** Hosts are running and should have internet connectivity\n")
@@ -98,18 +106,12 @@ if __name__ == '__main__':
 
     info('*** Starting to execute commands\n')
 
-    # info('Execute: client.cmd("time curl 10.0.0.2")\n')
-    # info(h1.cmd("time curl 10.0.0.2") + "\n")
+    # info('Execute: client2.cmd("time curl 10.0.0.20")\n')
+    # info(client2.cmd("time curl 10.0.0.20") + "\n")
 
-    # info('Execute: client.cmd("time curl 10.0.0.2/hello/42")\n')
-    # info(h2.cmd("time curl 10.0.0.2/hello/42") + "\n")
-
-    # info('Execute: client.cmd("time curl server")\n')
-    # info(client.cmd("time curl 10.0.0.2") + "\n")
-
-    # info('Execute: client.cmd("time curl server/hello/42")\n')
-    # info(client.cmd("time curl 10.0.0.2/hello/42") + "\n")
+    # info('Execute: client2.cmd("time curl 10.0.0.20/hello/42")\n')
+    # info(client2.cmd("time curl 10.0.0.20/hello/42") + "\n")
 
     CLI(net)
-    # Shut down NAT
+    # NAT'ın durdurulması
     net.stop()

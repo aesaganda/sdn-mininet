@@ -1,4 +1,3 @@
-from pydoc import render_doc
 from flask import Flask
 
 app = Flask(__name__)
@@ -6,7 +5,7 @@ app = Flask(__name__)
 
 @app.route("/")
 def default():
-    return render_doc("marmara.html")
+    return "Hello world.\n"
 
 
 @app.route("/hello/<id>")
@@ -20,4 +19,5 @@ def hello(id=0):
 
 
 if __name__ == "__main__":
+    app.debug = True
     app.run(host='0.0.0.0', port=80)
