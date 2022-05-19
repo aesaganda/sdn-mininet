@@ -1,7 +1,10 @@
+# ubuntu focal sürümünü base imaj olarak seçtim 
 FROM ubuntu:focal
 
+# docker.hub'dan alından imaja gerekli paketlerin kurulumu sağlanır.
 RUN apt-get update && apt-get install -y \
     net-tools \
     iputils-ping \
     iproute2 \
+    isc-dhcp-client \
     curl

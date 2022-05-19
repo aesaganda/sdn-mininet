@@ -4,6 +4,7 @@
 Example to create a Mininet topology and connect it to the internet via NAT
 """
 
+from http import client, server
 from mininet.net import Containernet
 from mininet.cli import CLI
 from mininet.log import lg, info
@@ -97,17 +98,17 @@ if __name__ == '__main__':
 
     info('*** Starting to execute commands\n')
 
-    # info('Execute: client.cmd("time curl 10.0.0.251")\n')
-    # info(h1.cmd("time curl 10.0.0.251") + "\n")
+    # info('Execute: client.cmd("time curl 10.0.0.2")\n')
+    # info(h1.cmd("time curl 10.0.0.2") + "\n")
 
-    # info('Execute: client.cmd("time curl 10.0.0.251/hello/42")\n')
-    # info(h2.cmd("time curl 10.0.0.251/hello/42") + "\n")
+    # info('Execute: client.cmd("time curl 10.0.0.2/hello/42")\n')
+    # info(h2.cmd("time curl 10.0.0.2/hello/42") + "\n")
 
     # info('Execute: client.cmd("time curl server")\n')
-    # info(node.cmd("time curl server") + "\n")
+    # info(client.cmd("time curl 10.0.0.2") + "\n")
 
     # info('Execute: client.cmd("time curl server/hello/42")\n')
-    # info(node.cmd("time curl server/hello/42") + "\n")
+    # info(client.cmd("time curl 10.0.0.2/hello/42") + "\n")
 
     CLI(net)
     # Shut down NAT
