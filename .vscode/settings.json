@@ -1,3 +1,6 @@
 {
-    "python.formatting.provider": "autopep8"
+    "python.formatting.provider": "autopep8",
+    "yaml.schemas": {
+        "https://json.schemastore.org/github-action.json": "untitled:Untitled-1"
+    }
 }
