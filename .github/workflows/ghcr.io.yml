@@ -13,4 +13,4 @@ steps:
       context: .
       file: ./Dockerfile.client
       push: true
-      tags: ghcr.io/myusername/my-client-image:v1
+      tags: ghcr.io/aesaganda/sdn-client:v1
